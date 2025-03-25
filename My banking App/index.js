@@ -28,19 +28,12 @@ const account3 = {
 
 const account4 = {
   owner: "Sarah Smith",
-  movements: [430, 1000, 700, 50, 90],
+  movements: [-430, -100],
   interestRate: 1,
   pin: 4444,
 };
 
 const accounts = [account1, account2, account3, account4];
-const userNameAccounts = [
-  account1.userName,
-  account2.userName,
-  account3.userName,
-  account4.userName,
-];
-const pinUser = [account1.pin, account2.pin, account3.pin, account4.pin];
 
 const welcomeEl = document.querySelector(".welcome");
 const loginInputUserEl = document.querySelector(".login__input--user");
@@ -52,6 +45,8 @@ const totalBalanceEl = document.querySelector(".t-balance");
 const moneyIn = document.querySelector(".p-money-in");
 const moneyOut = document.querySelector(".p-money-out");
 const interestRate = document.querySelector(".p-money-Interest");
+const transferBtnEl = document.querySelector(".transfer-loon-btn");
+const inputTransferEl = document.querySelector(".loon-field");
 
 function setupLogin(accounts) {
   accounts.forEach(function (acc) {
@@ -63,22 +58,22 @@ function setupLogin(accounts) {
   });
 }
 
-function loginCheck(loginInputUserEl, pinEl) {
-  let acc = userNameAccounts.includes(loginInputUserEl.value);
-  let pin = pinUser.filter((pin) => pin === pinEl);
+function loginCheck(username, pin) {
+  account = accounts.find((acc) => acc.userName === username);
 
-  if (loginInputUserEl === "js" && pinEl === "1111") {
+  if (account && account.pin === pin) {
+    alert("Welcome");
     changeOpacity(mainEl, "1");
-    displayMovments(account1.movements);
-    changeName(account1);
-    let balance = calculateTotalBalance(account1.movements);
-    displayTotalBalance(balance);
-    let totaldeposit = totalDeposit(account1.movements);
-    moneyIn.innerHTML = `${totaldeposit} €`;
-    let totalWithdraw = totalWithDraw(account1.movements);
-    moneyOut.innerHTML = `${Math.abs(totalWithdraw)} €`;
-    balance = calculateRate(account1);
-    interestRate.innerHTML = `${Math.round(balance * 100) / 100} €`;
+    displayMovments(account.movements);
+    changeName(account);
+    calculateTotalBalance(account.movements);
+    totalDeposit(account.movements);
+    totalWithDraw(account.movements);
+    calculateRate(account);
+    return account;
+  } else {
+    alert("Invalid username or PIN.");
+    return null;
   }
 }
 
@@ -122,38 +117,64 @@ function displayMovments(movements) {
 
 function calculateTotalBalance(movements) {
   let balance = movements.reduce((acc, mov) => acc + mov);
-  return balance;
+  totalBalanceEl.innerHTML = `${balance} €`;
 }
 
 function totalDeposit(movements) {
-  let totalDeposit = movements
-    .filter((mov) => mov > 0)
-    .reduce((acc, mov) => acc + mov);
-  return totalDeposit;
+  let ispositive = movements.filter((mov) => mov > 0);
+  if (ispositive.length != 0) {
+    let totalDeposit = movements
+      .filter((mov) => mov > 0)
+      .reduce((acc, mov) => acc + mov);
+    moneyIn.innerHTML = `${totalDeposit} €`;
+  }
 }
 
 function totalWithDraw(movements) {
-  let totalWithDraw = movements
-    .filter((mov) => mov < 0)
-    .reduce((acc, mov) => acc + mov);
-  return totalWithDraw;
+  let isNegativ = movements.filter((mov) => mov < 0);
+  if (isNegativ.length != 0) {
+    let totalWithDraw = movements
+      .filter((mov) => mov < 0)
+      .reduce((acc, mov) => acc + mov);
+    moneyOut.innerHTML = `${Math.abs(totalWithDraw)} €`;
+  }
 }
 
 function calculateRate(account) {
-  let sumRate = account.movements
-    .filter((mov) => mov > 0)
-    .map((mov) => (mov * account.interestRate) / 100)
-    .reduce((acc, mov) => acc + mov);
-  return sumRate;
+  let istherePositive = account.movements.filter((acc) => acc > 0);
+  if (istherePositive.length != 0) {
+    let sumRate = account.movements
+      .filter((mov) => mov > 0)
+      .map((mov) => (mov * account.interestRate) / 100)
+      .reduce((acc, mov) => acc + mov);
+    interestRate.innerHTML = `${Math.round(sumRate * 100) / 100} €`;
+  }
 }
+
+function loon(account, price) {
+  account.movements.push(price);
+}
+let account = {};
 
 setupLogin(accounts);
 
 btnLoginEl.addEventListener("click", function () {
-  const loginInputUserEl = document.querySelector(".login__input--user");
-  const pinEl = document.querySelector(".login__input--pin");
-  loginCheck(loginInputUserEl.value, pinEl.value);
+  const username = loginInputUserEl.value.toLowerCase();
+  const pin = Number(pinEl.value);
+  account = loginCheck(username, pin);
 
   loginInputUserEl.value = "";
   pinEl.value = "";
 });
+
+transferBtnEl.addEventListener("click", function () {
+  let price = Number(inputTransferEl.value);
+  loon(account, price);
+  displayMovments(account.movements);
+  calculateTotalBalance(account.movements);
+  totalDeposit(account.movements);
+  totalWithDraw(account.movements);
+  calculateRate(account);
+  inputTransferEl.value = "";
+});
+
