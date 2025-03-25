@@ -14,7 +14,7 @@
     <nav class="nav">
       <p class="welcome">Log in to get started</p>
       <img src="logo.png" alt="logo" class="logo" />
-      <div class="login-form">
+      <form class="login-form">
         <div class="login">
           <input
             type="text"
@@ -27,9 +27,9 @@
             maxlength="4"
             class="login__input login__input--pin"
           />
-          <button class="login__btn">&rarr;</button>
+          <button class="login__btn" type="button">&rarr;</button>
         </div>
-      </div>
+      </form>
     </nav>
     <main>
       <section class="curent-balance container">
@@ -73,24 +73,34 @@
             <p class="transfer-p">Transfer Money</p>
             <form class="form-transfer">
               <div class="transfer-to">
-                <input type="text" class="input-transfer" />
+                <input
+                  type="text"
+                  class="input-transfer field-transfer-to-user"
+                />
                 <p class="p-tranferto">Transfer to</p>
               </div>
               <div class="amount">
-                <input type="text" class="input-transfer" />
+                <input
+                  type="text"
+                  class="input-transfer field-transfer-to-amount"
+                />
                 <p class="amount-p">Amount</p>
               </div>
-              <button class="transfer__btn">&rarr;</button>
+              <button class="transfer__btn btn-transfer-to" type="button">
+                &rarr;
+              </button>
             </form>
           </div>
           <div class="transfer-money tranfer-loom">
             <p class="transfer-p">Request Loon</p>
             <form class="form-transfer-loom">
               <div class="amount">
-                <input type="text" class="input-transfer" />
+                <input type="text" class="input-transfer loon-field" />
                 <p class="amount-p">Amount</p>
               </div>
-              <button class="transfer__btn">&rarr;</button>
+              <button class="transfer__btn transfer-loon-btn" type="button">
+                &rarr;
+              </button>
             </form>
           </div>
 
@@ -105,7 +115,7 @@
                 <input type="text" class="input-transfer" />
                 <p class="amount-p">Amount</p>
               </div>
-              <button class="transfer__btn">&rarr;</button>
+              <button class="transfer__btn" type="button">&rarr;</button>
             </form>
           </div>
         </div>
@@ -139,3 +149,4 @@
     <script src="index.js"></script>
   </body>
 </html>
+
