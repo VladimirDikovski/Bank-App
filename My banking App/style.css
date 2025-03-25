@@ -1,0 +1,228 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+.container {
+  max-width: 110rem;
+  margin: 0 auto;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #444;
+  background-color: #f3f3f3;
+  height: 100vh;
+  padding: 2rem;
+}
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  max-width: 5rem;
+}
+
+.welcome {
+  font-size: 2rem;
+  font-weight: 500;
+}
+.login {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+.login__input {
+  height: 3.5rem;
+  width: 10rem;
+  border-radius: 2rem;
+  border: none;
+  display: flex;
+  text-align: center;
+}
+.login__btn {
+  border: none;
+  cursor: pointer;
+  font-size: 2.5rem;
+  background: none;
+}
+.curent-balance {
+  padding: 4.8rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.c-balance {
+  font-size: 3rem;
+  font-weight: 500;
+}
+.date {
+  font-size: 1.2rem;
+}
+.t-balance {
+  font-size: 4.4rem;
+  font-weight: 500;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 1.5rem;
+}
+
+.rows {
+  max-width: 50rem;
+}
+.current-transactions {
+  width: 50rem;
+  height: 54rem;
+  overflow: auto; /* Adds a scrollbar if content overflows */
+  border: 1px solid #ccc;
+}
+
+.label {
+  font-size: 1rem;
+  padding: 2px 4px;
+
+  border-radius: 11px;
+  color: #fff;
+  font-weight: 600;
+}
+.label-deposit {
+  background-image: linear-gradient(to top left, #39b385, #9be15d);
+}
+.label-wildraw {
+  background-image: linear-gradient(to top left, #e52a5a, #ff585f);
+}
+.deposit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+.date {
+  font-size: 1.2rem;
+}
+.deposit-price {
+  font-size: 2rem;
+}
+.current-transactions {
+  border-top-left-radius: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.transactions {
+  display: flex;
+  gap: 4rem;
+}
+.transfers {
+  max-width: 50rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.transfer-to,
+.amount {
+  display: inline-block;
+  text-align: center;
+}
+.transfer-p {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+}
+.transfer-money {
+  padding: 3rem;
+  border-radius: 1.1rem;
+  background-image: linear-gradient(to top left, #ffb003, #ffcb03);
+}
+.form-transfer {
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.input-transfer {
+  height: 3rem;
+  border-radius: 1.1rem;
+  border: none;
+  background-color: #f3f3f3;
+}
+.transfer__btn {
+  border: none;
+  cursor: pointer;
+  font-size: 3rem;
+  background: none;
+  align-self: flex-start;
+}
+
+.p-tranferto,
+.amount-p {
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+}
+.form-transfer-loom {
+  display: flex;
+  gap: 2rem;
+}
+.transfer-close-acc {
+  background-image: linear-gradient(to top left, #e52a5a, #ff585f);
+}
+.tranfer-loom {
+  background-image: linear-gradient(to top left, #39b385, #9be15d);
+}
+.total-section {
+  display: flex;
+  justify-content: space-between;
+  max-width: 110rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.total {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
+}
+.total-amount {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.total-p,
+.sort-p {
+  font-size: 1.6rem;
+}
+.amount-money {
+  font-size: 2rem;
+  font-weight: 500;
+}
+.p-money-in {
+  color: #66c873;
+}
+.p-money-out {
+  color: #f5465d;
+}
+.p-money-Interest {
+  color: #66c873;
+}
+.sort-btn {
+  border: none;
+  cursor: pointer;
+  background: none;
+  font-size: 1.6rem;
+}
+main {
+  opacity: 0;
+}
