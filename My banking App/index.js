@@ -47,6 +47,13 @@ const moneyOut = document.querySelector(".p-money-out");
 const interestRate = document.querySelector(".p-money-Interest");
 const transferBtnEl = document.querySelector(".transfer-loon-btn");
 const inputTransferEl = document.querySelector(".loon-field");
+const inputFieldTransferToUser = document.querySelector(
+  ".field-transfer-to-user"
+);
+const inputFieldTransfertoAmount = document.querySelector(
+  ".field-transfer-to-amount"
+);
+const buttonTransferto = document.querySelector(".btn-transfer-to");
 
 function setupLogin(accounts) {
   accounts.forEach(function (acc) {
@@ -59,7 +66,7 @@ function setupLogin(accounts) {
 }
 
 function loginCheck(username, pin) {
-  account = accounts.find((acc) => acc.userName === username);
+  account = findUser(username);
 
   if (account && account.pin === pin) {
     alert("Welcome");
@@ -152,7 +159,9 @@ function calculateRate(account) {
 }
 
 function loon(account, price) {
-  account.movements.push(price);
+  if (typeof price === "number" && (price > 0 || price < 0)) {
+    account.movements.push(price);
+  }
 }
 let account = {};
 
@@ -167,6 +176,15 @@ btnLoginEl.addEventListener("click", function () {
   pinEl.value = "";
 });
 
+function findUser(userName) {
+  let account = accounts.find((acc) => acc.userName === userName);
+  if (account) {
+    return account;
+  } else {
+    return null;
+  }
+}
+
 transferBtnEl.addEventListener("click", function () {
   let price = Number(inputTransferEl.value);
   loon(account, price);
@@ -177,4 +195,24 @@ transferBtnEl.addEventListener("click", function () {
   calculateRate(account);
   inputTransferEl.value = "";
 });
+
+buttonTransferto.addEventListener("click", function () {
+  let price = Number(inputFieldTransfertoAmount.value);
+  if (price != "" && (price < 0 || price > 0)) {
+    let userToTransfer = findUser(inputFieldTransferToUser.value);
+    userToTransfer.movements.push(price);
+    account.movements.push(price * -1);
+    calculateTotalBalance(userToTransfer.movements);
+    totalDeposit(userToTransfer.movements);
+    totalWithDraw(userToTransfer.movements);
+    calculateRate(userToTransfer);
+
+    displayMovments(account.movements);
+    calculateTotalBalance(account.movements);
+    totalDeposit(account.movements);
+    totalWithDraw(account.movements);
+    calculateRate(account);
+  }
+});
+
 
