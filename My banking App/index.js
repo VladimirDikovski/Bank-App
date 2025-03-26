@@ -93,7 +93,7 @@ function loginCheck(username, pin) {
 }
 
 function changeOpacity(main, value) {
-  mainEl.style.opacity = "1";
+  mainEl.style.opacity = value;
 }
 
 function changeName(account) {
@@ -256,7 +256,6 @@ btnCloseAccount.addEventListener("click", function () {
   if (deleteOrNot.toLocaleLowerCase() === "yes") {
     accountToAmount.movements.push(price);
     account.movements.push(price * -1);
-    account = accountToAmount;
     let indexOFaCC = accounts.indexOf(account);
     accounts.splice(indexOFaCC, 1);
     calculateTotalBalance(accountToAmount.movements);
@@ -264,8 +263,7 @@ btnCloseAccount.addEventListener("click", function () {
     totalWithDraw(accountToAmount.movements);
     calculateRate(accountToAmount);
     alert(`You deleted user ${account.owner}`);
-    changeName(accountToAmount);
-    displayMovments(accountToAmount.movements);
+    changeOpacity(mainEl, "0");
   } else if (deleteOrNot.toLocaleLowerCase() === "no") {
   } else {
     alert("Your Input is invalid!");
