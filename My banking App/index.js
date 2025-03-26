@@ -215,4 +215,16 @@ buttonTransferto.addEventListener("click", function () {
   }
 });
 
+sortArayBtn.addEventListener("click", function () {
+  if (sortArayBtn.textContent === "↑") {
+    sortArayBtn.textContent = "↓";
+    account.movements = account.movements.slice().reverse();
+  } else {
+    sortArayBtn.textContent = "↑";
+    account.movements = account.movements.slice().sort((a, b) => a - b);
+  }
+
+  displayMovments(account.movements);
+});
+
 
