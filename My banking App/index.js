@@ -35,6 +35,8 @@ const account4 = {
 
 const accounts = [account1, account2, account3, account4];
 
+let copyAccData = [...accounts];
+
 const welcomeEl = document.querySelector(".welcome");
 const loginInputUserEl = document.querySelector(".login__input--user");
 const pinEl = document.querySelector(".login__input--pin");
@@ -54,6 +56,12 @@ const inputFieldTransfertoAmount = document.querySelector(
   ".field-transfer-to-amount"
 );
 const buttonTransferto = document.querySelector(".btn-transfer-to");
+const sortArayBtn = document.querySelector(".sort-btn");
+const sortArrow = document.querySelector(".sort-p");
+
+const closeAccountUserFieldEl = document.querySelector(".close-account-user");
+const closeAccountAmountField = document.querySelector(".close-account-amount");
+const btnCloseAccount = document.querySelector(".close-account-btn");
 
 function setupLogin(accounts) {
   accounts.forEach(function (acc) {
@@ -185,6 +193,11 @@ function findUser(userName) {
   }
 }
 
+function deleteFields(field1, field2) {
+  field1.value = "";
+  field2.value = "";
+}
+
 transferBtnEl.addEventListener("click", function () {
   let price = Number(inputTransferEl.value);
   loon(account, price);
@@ -200,18 +213,22 @@ buttonTransferto.addEventListener("click", function () {
   let price = Number(inputFieldTransfertoAmount.value);
   if (price != "" && (price < 0 || price > 0)) {
     let userToTransfer = findUser(inputFieldTransferToUser.value);
+
     userToTransfer.movements.push(price);
     account.movements.push(price * -1);
+
     calculateTotalBalance(userToTransfer.movements);
     totalDeposit(userToTransfer.movements);
     totalWithDraw(userToTransfer.movements);
     calculateRate(userToTransfer);
 
-    displayMovments(account.movements);
     calculateTotalBalance(account.movements);
     totalDeposit(account.movements);
     totalWithDraw(account.movements);
     calculateRate(account);
+    displayMovments(account.movements);
+
+    deleteFields(inputFieldTransfertoAmount, inputFieldTransferToUser);
   }
 });
 
@@ -227,4 +244,33 @@ sortArayBtn.addEventListener("click", function () {
   displayMovments(account.movements);
 });
 
+btnCloseAccount.addEventListener("click", function () {
+  let price = Number(closeAccountAmountField.value);
+  let userName = closeAccountUserFieldEl.value;
+  let accountToAmount = findUser(userName);
+
+  let deleteOrNot = prompt(
+    `Are you sure to delete user ${account.owner} and trasfer money to user ${accountToAmount.owner} \n Yes or No`
+  );
+
+  if (deleteOrNot.toLocaleLowerCase() === "yes") {
+    accountToAmount.movements.push(price);
+    account.movements.push(price * -1);
+    account = accountToAmount;
+    let indexOFaCC = accounts.indexOf(account);
+    accounts.splice(indexOFaCC, 1);
+    calculateTotalBalance(accountToAmount.movements);
+    totalDeposit(accountToAmount.movements);
+    totalWithDraw(accountToAmount.movements);
+    calculateRate(accountToAmount);
+    alert(`You deleted user ${account.owner}`);
+    changeName(accountToAmount);
+    displayMovments(accountToAmount.movements);
+  } else if (deleteOrNot.toLocaleLowerCase() === "no") {
+  } else {
+    alert("Your Input is invalid!");
+  }
+
+  deleteFields(closeAccountUserFieldEl, closeAccountAmountField);
+});
 
