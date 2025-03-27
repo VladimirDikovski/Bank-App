@@ -273,7 +273,9 @@ btnCloseAccount.addEventListener("click", function () {
       let indexOFaCC = accounts.indexOf(account);
       accounts.splice(indexOFaCC, 1);
       alert(`You deleted user ${account.owner}`);
+      
       changeOpacity(mainEl, "0");
+       welcomeEl.textContent = "Log in to get started";
     } else {
       alert(`You don't have this user `);
       deleteFields(userName, pin);
