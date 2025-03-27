@@ -1,0 +1,73 @@
+/* under 912px */
+
+@media (max-width: 57em) {
+  html {
+    font-size: 56.25%;
+  }
+
+  .transactions {
+    flex-direction: column;
+    align-items: center;
+  }
+  .current-transactions {
+    order: 1;
+  }
+
+  .total-section {
+    justify-content: center;
+    gap: 1rem;
+    padding-bottom: 5rem;
+  }
+  .total {
+    gap: 1rem;
+  }
+}
+
+/* under 608px */
+@media (max-width: 38em) {
+  .c-balance {
+    font-size: 2rem;
+  }
+  .t-balance {
+    font-size: 2.4rem;
+  }
+  .nav {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
+  .transfers {
+    max-width: 45rem;
+  }
+  .input-transfer {
+    width: 100%;
+  }
+  .current-transactions {
+    max-width: 45rem;
+  }
+  .curent-balance,
+  .total-section,
+  .total {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+  }
+}
+
+/* under 608px */
+@media (max-width: 28em) {
+  .transfers {
+    max-width: 38rem;
+  }
+  .current-transactions {
+    max-width: 38rem;
+  }
+
+  .c-balance {
+    font-size: 3rem;
+  }
+  .t-balance {
+    font-size: 4rem;
+  }
+}
