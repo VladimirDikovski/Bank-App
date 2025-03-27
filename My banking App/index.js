@@ -33,6 +33,8 @@ const account4 = {
   pin: 4444,
 };
 
+let date = new Date();
+
 const accounts = [account1, account2, account3, account4];
 
 let copyAccData = [...accounts];
@@ -60,8 +62,9 @@ const sortArayBtn = document.querySelector(".sort-btn");
 const sortArrow = document.querySelector(".sort-p");
 
 const closeAccountUserFieldEl = document.querySelector(".close-account-user");
-const closeAccountAmountField = document.querySelector(".close-account-amount");
+const closeAccountPin = document.querySelector(".close-account-pin");
 const btnCloseAccount = document.querySelector(".close-account-btn");
+const currentBalanceDateEl = document.querySelector(".curent-balance-date");
 
 function setupLogin(accounts) {
   accounts.forEach(function (acc) {
@@ -78,6 +81,8 @@ function loginCheck(username, pin) {
 
   if (account && account.pin === pin) {
     alert("Welcome");
+
+    currentBalanceDateEl.textContent = String(date).slice(0, 21);
     changeOpacity(mainEl, "1");
     displayMovments(account.movements);
     changeName(account);
@@ -90,6 +95,14 @@ function loginCheck(username, pin) {
     alert("Invalid username or PIN.");
     return null;
   }
+}
+
+function updateUI(account) {
+  calculateTotalBalance(account.movements);
+  totalDeposit(account.movements);
+  totalWithDraw(account.movements);
+  calculateRate(account);
+  displayMovments(account.movements);
 }
 
 function changeOpacity(main, value) {
@@ -113,14 +126,14 @@ function displayMovments(movements) {
     } else {
       type = "wildraw";
     }
-
+    let currentDate = `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`;
     let html = ` <div class="rows">
               <div class="row">
               <div class="deposit">
                 <label for="text" class="label label-1 label-${type}"
                   >${i + 1} ${type}</label
                 >
-                <p class="date">12/03/2020</p>
+                <p class="date">26.03.2025</p>
               </div>
               <p class="deposit-price">${mov} €</p>
             </div>
@@ -201,11 +214,9 @@ function deleteFields(field1, field2) {
 transferBtnEl.addEventListener("click", function () {
   let price = Number(inputTransferEl.value);
   loon(account, price);
-  displayMovments(account.movements);
-  calculateTotalBalance(account.movements);
-  totalDeposit(account.movements);
-  totalWithDraw(account.movements);
-  calculateRate(account);
+
+  updateUI(account);
+
   inputTransferEl.value = "";
 });
 
@@ -213,20 +224,16 @@ buttonTransferto.addEventListener("click", function () {
   let price = Number(inputFieldTransfertoAmount.value);
   if (price != "" && (price < 0 || price > 0)) {
     let userToTransfer = findUser(inputFieldTransferToUser.value);
+    if (checkBalance(account, price)) {
+      userToTransfer.movements.push(price);
+      account.movements.push(price * -1);
 
-    userToTransfer.movements.push(price);
-    account.movements.push(price * -1);
-
-    calculateTotalBalance(userToTransfer.movements);
-    totalDeposit(userToTransfer.movements);
-    totalWithDraw(userToTransfer.movements);
-    calculateRate(userToTransfer);
-
-    calculateTotalBalance(account.movements);
-    totalDeposit(account.movements);
-    totalWithDraw(account.movements);
-    calculateRate(account);
-    displayMovments(account.movements);
+      updateUI(account);
+    } else {
+      alert(`You don't have enough money `);
+      deleteFields(inputFieldTransfertoAmount, inputFieldTransferToUser);
+      return;
+    }
 
     deleteFields(inputFieldTransfertoAmount, inputFieldTransferToUser);
   }
@@ -244,31 +251,39 @@ sortArayBtn.addEventListener("click", function () {
   displayMovments(account.movements);
 });
 
+function checkBalance(account, price) {
+  let totalBalanceAcc = account.movements.reduce((acc, mov) => acc + mov);
+  if ((price > 0) & (price <= totalBalanceAcc)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 btnCloseAccount.addEventListener("click", function () {
-  let price = Number(closeAccountAmountField.value);
-  let userName = closeAccountUserFieldEl.value;
-  let accountToAmount = findUser(userName);
+  let userName = closeAccountUserFieldEl.value.toLocaleLowerCase();
+  let pin = Number(closeAccountPin.value);
 
   let deleteOrNot = prompt(
-    `Are you sure to delete user ${account.owner} and trasfer money to user ${accountToAmount.owner} \n Yes or No`
+    `Are you sure to delete user ${account.owner}\n Yes Or No`
   );
 
   if (deleteOrNot.toLocaleLowerCase() === "yes") {
-    accountToAmount.movements.push(price);
-    account.movements.push(price * -1);
-    let indexOFaCC = accounts.indexOf(account);
-    accounts.splice(indexOFaCC, 1);
-    calculateTotalBalance(accountToAmount.movements);
-    totalDeposit(accountToAmount.movements);
-    totalWithDraw(accountToAmount.movements);
-    calculateRate(accountToAmount);
-    alert(`You deleted user ${account.owner}`);
-    changeOpacity(mainEl, "0");
+    if (account.pin === pin && account && account.userName === userName) {
+      let indexOFaCC = accounts.indexOf(account);
+      accounts.splice(indexOFaCC, 1);
+      alert(`You deleted user ${account.owner}`);
+      changeOpacity(mainEl, "0");
+    } else {
+      alert(`You don't have this user `);
+      deleteFields(userName, pin);
+      return;
+    }
   } else if (deleteOrNot.toLocaleLowerCase() === "no") {
   } else {
     alert("Your Input is invalid!");
   }
 
-  deleteFields(closeAccountUserFieldEl, closeAccountAmountField);
+  deleteFields(closeAccountUserFieldEl, closeAccountPin);
 });
 
