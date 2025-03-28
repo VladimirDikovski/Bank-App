@@ -1,3 +1,4 @@
+
 "use strict";
 
 /////////////////////////////////////////////////
@@ -117,9 +118,11 @@ function displayTotalBalance(sumTotal) {
   totalBalanceEl.innerHTML = `${sumTotal} €`;
 }
 
-function displayMovments(movements) {
+function displayMovments(movements, sort = false) {
   currentTransactionEl.innerHTML = " ";
-  movements.forEach(function (mov, i) {
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  movs.forEach(function (mov, i) {
     let type = " ";
     if (mov > 0) {
       type = "deposit";
@@ -239,16 +242,10 @@ buttonTransferto.addEventListener("click", function () {
   }
 });
 
+let sorted = false;
 sortArayBtn.addEventListener("click", function () {
-  if (sortArayBtn.textContent === "↑") {
-    sortArayBtn.textContent = "↓";
-    account.movements = account.movements.slice().reverse();
-  } else {
-    sortArayBtn.textContent = "↑";
-    account.movements = account.movements.slice().sort((a, b) => a - b);
-  }
-
-  displayMovments(account.movements);
+  displayMovments(account.movements, !sorted);
+  sorted = !sorted;
 });
 
 function checkBalance(account, price) {
@@ -273,13 +270,10 @@ btnCloseAccount.addEventListener("click", function () {
       let indexOFaCC = accounts.indexOf(account);
       accounts.splice(indexOFaCC, 1);
       alert(`You deleted user ${account.owner}`);
-      
       changeOpacity(mainEl, "0");
-       welcomeEl.textContent = "Log in to get started";
+      welcomeEl.textContent = "Log in to get started";
     } else {
       alert(`You don't have this user `);
-      deleteFields(userName, pin);
-      return;
     }
   } else if (deleteOrNot.toLocaleLowerCase() === "no") {
   } else {
@@ -288,4 +282,3 @@ btnCloseAccount.addEventListener("click", function () {
 
   deleteFields(closeAccountUserFieldEl, closeAccountPin);
 });
-
