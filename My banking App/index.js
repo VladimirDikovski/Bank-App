@@ -1,4 +1,3 @@
-
 "use strict";
 
 /////////////////////////////////////////////////
@@ -8,9 +7,22 @@
 // Data
 const account1 = {
   owner: "Jonas Schmedtmann",
-  movements: [200, 450, -400, 3000, -650, -130, 70, 1300, 500],
+  movements: [200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300],
   interestRate: 1.2, // %
   pin: 1111,
+
+  movementsDates: [
+    "2019-11-18T21:31:17.178Z",
+    "2019-12-23T07:42:02.383Z",
+    "2020-01-28T09:15:04.904Z",
+    "2020-04-01T10:17:24.185Z",
+    "2020-05-08T14:11:59.604Z",
+    "2020-05-27T17:01:17.194Z",
+    "2020-07-11T23:36:17.929Z",
+    "2020-07-12T10:51:36.790Z",
+  ],
+  currency: "EUR",
+  locale: "pt-PT", // de-DE
 };
 
 const account2 = {
@@ -18,26 +30,24 @@ const account2 = {
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
+
+  movementsDates: [
+    "2019-11-01T13:15:33.035Z",
+    "2019-11-30T09:48:16.867Z",
+    "2019-12-25T06:04:23.907Z",
+    "2020-01-25T14:18:46.235Z",
+    "2020-02-05T16:33:06.386Z",
+    "2020-04-10T14:43:26.374Z",
+    "2020-06-25T18:49:59.371Z",
+    "2020-07-26T12:01:20.894Z",
+  ],
+  currency: "USD",
+  locale: "en-US",
 };
 
-const account3 = {
-  owner: "Steven Thomas Williams",
-  movements: [200, -200, 340, -300, -20, 50, 400, -460],
-  interestRate: 0.7,
-  pin: 3333,
-};
-
-const account4 = {
-  owner: "Sarah Smith",
-  movements: [-430, -100],
-  interestRate: 1,
-  pin: 4444,
-};
+const accounts = [account1, account2];
 
 let date = new Date();
-
-const accounts = [account1, account2, account3, account4];
-
 let copyAccData = [...accounts];
 
 const welcomeEl = document.querySelector(".welcome");
@@ -85,11 +95,8 @@ function loginCheck(username, pin) {
 
     currentBalanceDateEl.textContent = String(date).slice(0, 21);
     changeOpacity(mainEl, "1");
-    displayMovments(account.movements);
     changeName(account);
-    calculateTotalBalance(account.movements);
-    totalDeposit(account.movements);
-    totalWithDraw(account.movements);
+    updateUI(account);
     calculateRate(account);
     return account;
   } else {
@@ -103,7 +110,7 @@ function updateUI(account) {
   totalDeposit(account.movements);
   totalWithDraw(account.movements);
   calculateRate(account);
-  displayMovments(account.movements);
+  displayMovments(account);
 }
 
 function changeOpacity(main, value) {
@@ -118,27 +125,34 @@ function displayTotalBalance(sumTotal) {
   totalBalanceEl.innerHTML = `${sumTotal} €`;
 }
 
-function displayMovments(movements, sort = false) {
+function displayMovments(acc, sort = false) {
   currentTransactionEl.innerHTML = " ";
 
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
   movs.forEach(function (mov, i) {
     let type = " ";
+    let dateMovements = new Date(acc.movementsDates[i]);
+    let year = dateMovements.getFullYear();
+    let month = `${dateMovements.getMonth() + 1}`.padStart(2, 0);
+    let day = `${dateMovements.getDate()}`.padStart(2, 0);
+    let dateMov = `${day}/${month}/${year}`;
     if (mov > 0) {
       type = "deposit";
     } else {
       type = "wildraw";
     }
-    let currentDate = `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`;
+
     let html = ` <div class="rows">
               <div class="row">
               <div class="deposit">
                 <label for="text" class="label label-1 label-${type}"
                   >${i + 1} ${type}</label
                 >
-                <p class="date">26.03.2025</p>
+                <p class="date">${dateMov}</p>
               </div>
-              <p class="deposit-price">${mov} €</p>
+              <p class="deposit-price">${mov.toFixed(2)} €</p>
             </div>
           </div>`;
 
@@ -148,7 +162,7 @@ function displayMovments(movements, sort = false) {
 
 function calculateTotalBalance(movements) {
   let balance = movements.reduce((acc, mov) => acc + mov);
-  totalBalanceEl.innerHTML = `${balance} €`;
+  totalBalanceEl.innerHTML = `${balance.toFixed(2)} €`;
 }
 
 function totalDeposit(movements) {
@@ -157,7 +171,7 @@ function totalDeposit(movements) {
     let totalDeposit = movements
       .filter((mov) => mov > 0)
       .reduce((acc, mov) => acc + mov);
-    moneyIn.innerHTML = `${totalDeposit} €`;
+    moneyIn.innerHTML = `${totalDeposit.toFixed(2)} €`;
   }
 }
 
@@ -167,7 +181,7 @@ function totalWithDraw(movements) {
     let totalWithDraw = movements
       .filter((mov) => mov < 0)
       .reduce((acc, mov) => acc + mov);
-    moneyOut.innerHTML = `${Math.abs(totalWithDraw)} €`;
+    moneyOut.innerHTML = `${Math.abs(totalWithDraw.toFixed(2))} €`;
   }
 }
 
@@ -193,7 +207,7 @@ setupLogin(accounts);
 
 btnLoginEl.addEventListener("click", function () {
   const username = loginInputUserEl.value.toLowerCase();
-  const pin = Number(pinEl.value);
+  const pin = +pinEl.value;
   account = loginCheck(username, pin);
 
   loginInputUserEl.value = "";
@@ -215,7 +229,7 @@ function deleteFields(field1, field2) {
 }
 
 transferBtnEl.addEventListener("click", function () {
-  let price = Number(inputTransferEl.value);
+  let price = Math.floor(inputTransferEl.value);
   loon(account, price);
 
   updateUI(account);
@@ -224,7 +238,7 @@ transferBtnEl.addEventListener("click", function () {
 });
 
 buttonTransferto.addEventListener("click", function () {
-  let price = Number(inputFieldTransfertoAmount.value);
+  let price = +inputFieldTransfertoAmount.value;
   if (price != "" && (price < 0 || price > 0)) {
     let userToTransfer = findUser(inputFieldTransferToUser.value);
     if (checkBalance(account, price)) {
@@ -259,7 +273,7 @@ function checkBalance(account, price) {
 
 btnCloseAccount.addEventListener("click", function () {
   let userName = closeAccountUserFieldEl.value.toLocaleLowerCase();
-  let pin = Number(closeAccountPin.value);
+  let pin = +closeAccountPin.value;
 
   let deleteOrNot = prompt(
     `Are you sure to delete user ${account.owner}\n Yes Or No`
@@ -282,3 +296,4 @@ btnCloseAccount.addEventListener("click", function () {
 
   deleteFields(closeAccountUserFieldEl, closeAccountPin);
 });
+
