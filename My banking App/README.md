@@ -1,7 +1,7 @@
 # Bank-App
 Using HTML CSS AND JS
 
-I this app i created 4 account object :
+I this app i created 2 account object :
 UserNames =[js,jd]
 Pin = [1111,2222]
 
