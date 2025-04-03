@@ -19,7 +19,7 @@ const account1 = {
     "2020-05-08T14:11:59.604Z",
     "2020-05-27T17:01:17.194Z",
     "2020-07-11T23:36:17.929Z",
-    "2020-07-12T10:51:36.790Z",
+    "2025-04-01T10:51:36.790Z",
   ],
   currency: "EUR",
   locale: "pt-PT", // de-DE
@@ -39,7 +39,7 @@ const account2 = {
     "2020-02-05T16:33:06.386Z",
     "2020-04-10T14:43:26.374Z",
     "2020-06-25T18:49:59.371Z",
-    "2020-07-26T12:01:20.894Z",
+    "2025-03-03T12:01:20.894Z",
   ],
   currency: "USD",
   locale: "en-US",
@@ -113,6 +113,10 @@ function updateUI(account) {
   displayMovments(account);
 }
 
+const dateCalculate = (date1, date2) => {
+  return Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)));
+};
+
 function changeOpacity(main, value) {
   mainEl.style.opacity = value;
 }
@@ -125,24 +129,53 @@ function displayTotalBalance(sumTotal) {
   totalBalanceEl.innerHTML = `${sumTotal} €`;
 }
 
+function withdrawOrDeposit(movements) {
+  if (movements > 0) {
+    return "Deposit";
+  } else {
+    return "wildraw";
+  }
+}
+
+function formatDate(date) {
+  let year = date.getFullYear();
+  let month = `${date.getMonth() + 1}`.padStart(2, 0);
+  let day = `${date.getDate()}`.padStart(2, 0);
+  return `${day}/${month}/${year}`;
+}
+
 function displayMovments(acc, sort = false) {
   currentTransactionEl.innerHTML = " ";
 
-  const movs = sort
-    ? acc.movements.slice().sort((a, b) => a - b)
-    : acc.movements;
-  movs.forEach(function (mov, i) {
-    let type = " ";
-    let dateMovements = new Date(acc.movementsDates[i]);
-    let year = dateMovements.getFullYear();
-    let month = `${dateMovements.getMonth() + 1}`.padStart(2, 0);
-    let day = `${dateMovements.getDate()}`.padStart(2, 0);
-    let dateMov = `${day}/${month}/${year}`;
-    if (mov > 0) {
-      type = "deposit";
-    } else {
-      type = "wildraw";
+  const combineDateAndMovments = acc.movements.map((mov, i) => ({
+    movements: mov,
+    movementsDate: acc.movementsDates[i],
+  }));
+
+  if (sort) {
+    combineDateAndMovments.sort((a, b) => a.movements - b.movements);
+  }
+
+  combineDateAndMovments.forEach(function (obj, i) {
+    const { movements, movementsDate } = obj;
+
+    let dateMov = " ";
+
+    let dateMovements = formatDate(new Date(movementsDate));
+
+    let distanceBetweenTrasactionsDate = dateCalculate(
+      new Date(),
+      new Date(movementsDate)
+    );
+    if (distanceBetweenTrasactionsDate === 0) dateMov = "Today";
+    else if (distanceBetweenTrasactionsDate === 1) dateMov = "Yesterday";
+    else if (distanceBetweenTrasactionsDate <= 7)
+      dateMov = `${distanceBetweenTrasactionsDate} ago`;
+    else {
+      dateMov = dateMovements;
     }
+
+    let type = withdrawOrDeposit(movements);
 
     let html = ` <div class="rows">
               <div class="row">
@@ -152,7 +185,7 @@ function displayMovments(acc, sort = false) {
                 >
                 <p class="date">${dateMov}</p>
               </div>
-              <p class="deposit-price">${mov.toFixed(2)} €</p>
+              <p class="deposit-price">${movements.toFixed(2)} €</p>
             </div>
           </div>`;
 
@@ -199,7 +232,7 @@ function calculateRate(account) {
 function loon(account, price) {
   if (typeof price === "number" && (price > 0 || price < 0)) {
     account.movements.push(price);
-     account.movementsDates.push(new Date());
+    account.movementsDates.push(new Date());
   }
 }
 let account = {};
@@ -259,7 +292,7 @@ buttonTransferto.addEventListener("click", function () {
 
 let sorted = false;
 sortArayBtn.addEventListener("click", function () {
-  displayMovments(account.movements, !sorted);
+  displayMovments(account, !sorted);
   sorted = !sorted;
 });
 
