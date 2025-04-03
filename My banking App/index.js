@@ -170,7 +170,7 @@ function displayMovments(acc, sort = false) {
     if (distanceBetweenTrasactionsDate === 0) dateMov = "Today";
     else if (distanceBetweenTrasactionsDate === 1) dateMov = "Yesterday";
     else if (distanceBetweenTrasactionsDate <= 7)
-      dateMov = `${distanceBetweenTrasactionsDate} ago`;
+      dateMov = `${distanceBetweenTrasactionsDate} days ago`;
     else {
       dateMov = dateMovements;
     }
