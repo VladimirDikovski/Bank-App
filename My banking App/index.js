@@ -199,6 +199,7 @@ function calculateRate(account) {
 function loon(account, price) {
   if (typeof price === "number" && (price > 0 || price < 0)) {
     account.movements.push(price);
+     account.movementsDates.push(new Date());
   }
 }
 let account = {};
