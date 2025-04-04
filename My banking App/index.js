@@ -112,8 +112,8 @@ function loginCheck(username, pin) {
   account = findUser(username);
 
   if (timerFunction) {
-    reset
-    setResetTimer();
+    setInterval(timer);
+    timerFunction();
   }
 
   if (account && account.pin === pin) {
