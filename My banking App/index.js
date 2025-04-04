@@ -46,6 +46,8 @@ const account2 = {
 };
 
 const accounts = [account1, account2];
+let account = {};
+let timer;
 
 let date = new Date();
 let copyAccData = [...accounts];
@@ -76,6 +78,7 @@ const closeAccountUserFieldEl = document.querySelector(".close-account-user");
 const closeAccountPin = document.querySelector(".close-account-pin");
 const btnCloseAccount = document.querySelector(".close-account-btn");
 const currentBalanceDateEl = document.querySelector(".curent-balance-date");
+const timerPEl = document.querySelector(".login-p");
 
 function setupLogin(accounts) {
   accounts.forEach(function (acc) {
@@ -87,13 +90,47 @@ function setupLogin(accounts) {
   });
 }
 
+const timerFunction = function setResetTimer() {
+  timer = 120;
+  const timeCounter = setInterval(function () {
+    let minutes = String(Math.trunc(timer / 60)).padStart(2, "0");
+    let seconds = String(timer % 60).padStart(2, "0");
+    timerPEl.textContent = `You will be logged out in ${minutes} ${seconds}`;
+
+    if (timer === 0) {
+      changeOpacity(mainEl, "0");
+      clearIntervalr(timeCounter);
+    }
+
+    timer--;
+  }, 1000);
+
+  return timer;
+};
+
 function loginCheck(username, pin) {
   account = findUser(username);
 
+  if (timerFunction) {
+    reset
+    setResetTimer();
+  }
+
   if (account && account.pin === pin) {
     alert("Welcome");
+    const options = {
+      hour: "numeric",
+      miute: "numeric",
+      day: "numeric",
+      month: "numeric", //long ,2digit
+      year: "numeric", //2 digit
+    };
 
-    currentBalanceDateEl.textContent = String(date).slice(0, 21);
+    currentBalanceDateEl.textContent = new Intl.DateTimeFormat(
+      username.locale,
+      options
+    ).format(date);
+
     changeOpacity(mainEl, "1");
     changeName(account);
     updateUI(account);
@@ -137,11 +174,8 @@ function withdrawOrDeposit(movements) {
   }
 }
 
-function formatDate(date) {
-  let year = date.getFullYear();
-  let month = `${date.getMonth() + 1}`.padStart(2, 0);
-  let day = `${date.getDate()}`.padStart(2, 0);
-  return `${day}/${month}/${year}`;
+function formatDate(date, locale) {
+  return new Intl.DateTimeFormat(locale).format(date);
 }
 
 function displayMovments(acc, sort = false) {
@@ -161,7 +195,7 @@ function displayMovments(acc, sort = false) {
 
     let dateMov = " ";
 
-    let dateMovements = formatDate(new Date(movementsDate));
+    let dateMovements = formatDate(new Date(movementsDate), acc.locale);
 
     let distanceBetweenTrasactionsDate = dateCalculate(
       new Date(),
@@ -176,6 +210,10 @@ function displayMovments(acc, sort = false) {
     }
 
     let type = withdrawOrDeposit(movements);
+    let currenceSymbol = {
+      style: "currency",
+      currency: acc.currency,
+    };
 
     let html = ` <div class="rows">
               <div class="row">
@@ -185,7 +223,10 @@ function displayMovments(acc, sort = false) {
                 >
                 <p class="date">${dateMov}</p>
               </div>
-              <p class="deposit-price">${movements.toFixed(2)} €</p>
+              <p class="deposit-price">${new Intl.NumberFormat(
+                acc.locale,
+                currenceSymbol
+              ).format(movements)}</p>
             </div>
           </div>`;
 
@@ -235,7 +276,6 @@ function loon(account, price) {
     account.movementsDates.push(new Date());
   }
 }
-let account = {};
 
 setupLogin(accounts);
 
@@ -266,7 +306,9 @@ transferBtnEl.addEventListener("click", function () {
   let price = Math.floor(inputTransferEl.value);
   loon(account, price);
 
-  updateUI(account);
+  setTimeout(function () {
+    updateUI(account);
+  }, 3000);
 
   inputTransferEl.value = "";
 });
@@ -278,6 +320,8 @@ buttonTransferto.addEventListener("click", function () {
     if (checkBalance(account, price)) {
       userToTransfer.movements.push(price);
       account.movements.push(price * -1);
+      account.movementsDates.push(new Date());
+      userToTransfer.movementsDates.push(new Date());
 
       updateUI(account);
     } else {
@@ -330,4 +374,3 @@ btnCloseAccount.addEventListener("click", function () {
 
   deleteFields(closeAccountUserFieldEl, closeAccountPin);
 });
-
