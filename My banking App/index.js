@@ -282,6 +282,7 @@ setupLogin(accounts);
 btnLoginEl.addEventListener("click", function () {
   const username = loginInputUserEl.value.toLowerCase();
   const pin = +pinEl.value;
+
   account = loginCheck(username, pin);
 
   loginInputUserEl.value = "";
@@ -304,17 +305,23 @@ function deleteFields(field1, field2) {
 
 transferBtnEl.addEventListener("click", function () {
   let price = Math.floor(inputTransferEl.value);
+  setInterval(timer);
+  timerFunction();
+
   loon(account, price);
 
   setTimeout(function () {
     updateUI(account);
-  }, 3000);
+  }, 1000);
 
   inputTransferEl.value = "";
 });
 
 buttonTransferto.addEventListener("click", function () {
   let price = +inputFieldTransfertoAmount.value;
+  setInterval(timer);
+  timerFunction();
+
   if (price != "" && (price < 0 || price > 0)) {
     let userToTransfer = findUser(inputFieldTransferToUser.value);
     if (checkBalance(account, price)) {
@@ -352,6 +359,8 @@ function checkBalance(account, price) {
 btnCloseAccount.addEventListener("click", function () {
   let userName = closeAccountUserFieldEl.value.toLocaleLowerCase();
   let pin = +closeAccountPin.value;
+  setInterval(timer);
+  timerFunction();
 
   let deleteOrNot = prompt(
     `Are you sure to delete user ${account.owner}\n Yes Or No`
@@ -374,3 +383,4 @@ btnCloseAccount.addEventListener("click", function () {
 
   deleteFields(closeAccountUserFieldEl, closeAccountPin);
 });
+
