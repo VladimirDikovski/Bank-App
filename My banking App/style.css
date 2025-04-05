@@ -81,6 +81,10 @@ body {
 .rows {
   max-width: 50rem;
 }
+.input-transfer {
+  padding: 1rem;
+}
+
 .current-transactions {
   width: 50rem;
   height: 54rem;
