@@ -90,31 +90,35 @@ function setupLogin(accounts) {
   });
 }
 
-const timerFunction = function setResetTimer() {
-  timer = 120;
-  const timeCounter = setInterval(function () {
-    let minutes = String(Math.trunc(timer / 60)).padStart(2, "0");
-    let seconds = String(timer % 60).padStart(2, "0");
-    timerPEl.textContent = `You will be logged out in ${minutes} ${seconds}`;
+let timerId;
 
-    if (timer === 0) {
+const startLogoutTimer = function () {
+  let time = 120;
+
+  const tick = () => {
+    const minutes = String(Math.trunc(time / 60)).padStart(2, "0");
+    const seconds = String(time % 60).padStart(2, "0");
+    timerPEl.textContent = `You will be logged out in ${minutes}:${seconds}`;
+
+    if (time === 0) {
+      clearInterval(timerId);
       changeOpacity(mainEl, "0");
-      clearIntervalr(timeCounter);
+      welcomeEl.textContent = "Log in to get started";
     }
 
-    timer--;
-  }, 1000);
+    time--;
+  };
 
-  return timer;
+  // Clear previous timer if exists
+  if (timerId) clearInterval(timerId);
+  tick(); // run once immediately
+  timerId = setInterval(tick, 1000);
 };
 
 function loginCheck(username, pin) {
   account = findUser(username);
 
-  if (timerFunction) {
-    setInterval(timer);
-    timerFunction();
-  }
+  startLogoutTimer();
 
   if (account && account.pin === pin) {
     alert("Welcome");
@@ -305,9 +309,7 @@ function deleteFields(field1, field2) {
 
 transferBtnEl.addEventListener("click", function () {
   let price = Math.floor(inputTransferEl.value);
-  setInterval(timer);
-  timerFunction();
-
+  startLogoutTimer();
   loon(account, price);
 
   setTimeout(function () {
@@ -319,8 +321,7 @@ transferBtnEl.addEventListener("click", function () {
 
 buttonTransferto.addEventListener("click", function () {
   let price = +inputFieldTransfertoAmount.value;
-  setInterval(timer);
-  timerFunction();
+  startLogoutTimer();
 
   if (price != "" && (price < 0 || price > 0)) {
     let userToTransfer = findUser(inputFieldTransferToUser.value);
@@ -359,8 +360,7 @@ function checkBalance(account, price) {
 btnCloseAccount.addEventListener("click", function () {
   let userName = closeAccountUserFieldEl.value.toLocaleLowerCase();
   let pin = +closeAccountPin.value;
-  setInterval(timer);
-  timerFunction();
+  startLogoutTimer();
 
   let deleteOrNot = prompt(
     `Are you sure to delete user ${account.owner}\n Yes Or No`
@@ -383,4 +383,3 @@ btnCloseAccount.addEventListener("click", function () {
 
   deleteFields(closeAccountUserFieldEl, closeAccountPin);
 });
-
