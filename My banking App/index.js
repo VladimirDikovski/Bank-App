@@ -93,7 +93,7 @@ function setupLogin(accounts) {
 let timerId;
 
 const startLogoutTimer = function () {
-  let time = 120;
+  let time = 600;
 
   const tick = () => {
     const minutes = String(Math.trunc(time / 60)).padStart(2, "0");
